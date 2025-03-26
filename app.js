@@ -17,6 +17,7 @@ const addRouter = require('./routes/add')
 const subtractRouter = require('./routes/subtract')
 const multiplyRouter = require('./routes/multiply')
 const divideRouter = require('./routes/divide')
+const previousRouter = require('./routes/previous')
 const authRouter = require('./routes/auth')
 
 // adding the routes to app
@@ -25,6 +26,7 @@ app.use('/add', addRouter)
 app.use('/subtract', subtractRouter)
 app.use('/multiply', multiplyRouter)
 app.use('/divide', divideRouter)
+app.use('/previous', previousRouter)
 app.use('/login', authRouter)
 
 const port = process.env.PORT || 3000

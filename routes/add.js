@@ -19,17 +19,15 @@ router.get('/:num1/:num2', async (req, res) => {
 
         const result = num1 + num2
 
-        const token = req.headers.authorization.split(' ')[1]
+        const token = req.headers.authorization?.split(' ')[1] || null
 
         if (!token) {
             return res.status(200).jsend.success(result)
 
         } else {
-
-            jwt.verify(token, process.env.JWT_SECRET)
-
-            // verification passed
-            const parsedToken = jwt.decode(token)
+            // token is present
+            // verify token and decode it
+            const parsedToken = jwt.verify(token, process.env.JWT_SECRET)
 
             // use the token to create a new Result in the DB with the User id
             const dbResult = await resultService.createResult("add", result, parsedToken.id)
@@ -38,11 +36,12 @@ router.get('/:num1/:num2', async (req, res) => {
             res.status(201).jsend.success({ dbResult })
         }
     } catch (err) {
+        // catch invalid token error
         if (err instanceof jwt.JsonWebTokenError) {
             return res.status(401).jsend.fail({ message: "Invalid token" })
         }
         // catch a 500 internal server error
-        return res.status(500).jsend.error("Internal server error")
+        return res.status(500).jsend.error(err.message)
         // return res.status(500).jsend.error(err.message)
     }
 })
